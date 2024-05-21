@@ -53,18 +53,17 @@ def experience():
     if request.method == 'POST':
         required_fields = ['title','company','start_date','end_date','description','logo']
         if not request.json:
-            response = jsonify({'error':'Filed Creating Experience'}), 400
-        else:
-            missing_fields = [field.capitalize() for field in required_fields
-                               if field not in request.json]
-            if len(missing_fields) > 0:
-                response = jsonify({'error':f'Missing Field: {missing_fields[0]}'}), 400
-            else:
-                experiences = data.get('experience',[])
-                experience_id = len(experiences)
-                experiences.append(request.json)
-                data['experience'] = experiences
-                response = jsonify({'id':experience_id})
+            return jsonify({'error':'Failed Creating Experience'}), 400
+        
+        missing_fields = [field for field in required_fields if field not in request.json]
+        if missing_fields:
+            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
+        
+        experiences = data.get('experience',[])
+        experience_id = len(experiences)
+        experiences.append(request.json)
+        data['experience'] = experiences
+        response = jsonify({'id':experience_id})
     return response
 
 @app.route('/resume/education', methods=['GET', 'POST'])
@@ -94,23 +93,20 @@ def education():
     if request.method == 'POST':
         required_fields = ['course', 'school', 'start_date', 'end_date', 'grade', 'logo']
         if not request.json:
-            response = jsonify({'error': 'Filed Creating Education'}), 400
-        else:
-            missing_fields = [field.capitalize() for field in required_fields
-                              if field not in request.json]
-            if len(missing_fields) > 0:
-                response = jsonify({'error': f'Missing Field: {missing_fields[0]}'}), 400
-            else:
-                education_data = data.get('education', [])
-                new_education = request.json
-                education_id = len(education_data)
-                education_data.append(new_education)
-                data['education'] = education_data
-                save_data('data.json', data)
-                response = jsonify({'id': education_id})
-        return response
-
-    return jsonify({})
+            return jsonify({'error': 'No data provided'}), 400
+        
+        missing_fields = [field for field in required_fields if field not in request.json]
+        if missing_fields:
+            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
+        
+        education_data = data.get('education', [])
+        new_education = request.json
+        education_id = len(education_data)
+        education_data.append(new_education)
+        data['education'] = education_data
+        save_data('data.json', data)
+        
+        return jsonify({'id': education_id})
 
 @app.route('/resume/skill', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def skill():
@@ -174,3 +170,4 @@ def skill():
             return jsonify({'error:': 'Skill does not exist'}), 404
 
     return jsonify({})
+

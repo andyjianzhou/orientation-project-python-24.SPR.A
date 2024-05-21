@@ -91,6 +91,38 @@ def test_get_education(mocker):
     assert response.json == expected_response
 
 
+def test_post_education_missing_fields():
+    """Test POST request to /resume/education with missing fields.
+    POST request with missing 'end_date' and 'grade' fields.
+    """
+    incomplete_education = {
+        "course": "Engineering",
+        "school": "UBC",
+        "start_date": "October 2024",
+        "logo": "example-logo.png"
+    }
+    response = app.test_client().post('/resume/education', json=incomplete_education)
+    assert response.status_code == 400
+    assert 'Missing required fields' in response.json['error']
+    assert 'end_date' in response.json['error']
+    assert 'grade' in response.json['error']
+
+
+def test_post_experience_missing_fields():
+    """Test POST request to /resume/experience with missing fields.
+    POST request with missing 'company' and 'start_date' fields.
+    """
+    incomplete_experience = {
+        "title": "Software Developer",  
+        "description": "Writes code",
+    }
+    response = app.test_client().post('/resume/experience', json=incomplete_experience)
+    assert response.status_code == 400
+    assert 'Missing required fields' in response.json['error']
+    assert 'company' in response.json['error']
+    assert 'start_date' in response.json['error']
+
+
 def test_skill():
     '''
     Add a new skill and then get all skills. 
