@@ -67,7 +67,6 @@ def experience():
                 response = jsonify({'id':experience_id})
     return response
 
-  
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
     '''
@@ -105,9 +104,7 @@ def education():
                 education_data = data.get('education', [])
                 new_education = request.json
                 education_id = len(education_data)
-                
                 education_data.append(new_education)
-                
                 data['education'] = education_data
                 save_data('data.json', data)
                 response = jsonify({'id': education_id})
@@ -115,7 +112,6 @@ def education():
 
     return jsonify({})
 
-  
 @app.route('/resume/skill', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def skill():
     '''
