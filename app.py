@@ -93,7 +93,26 @@ def education():
         return jsonify(data.get('education', []))
 
     if request.method == 'POST':
-        return jsonify({})
+        required_fields = ['course', 'school', 'start_date', 'end_date', 'grade', 'logo']
+        if not request.json:
+            response = jsonify({'error': 'Filed Creating Education'}), 400
+        else:
+            missing_fields = [field.capitalize() for field in required_fields
+                              if field not in request.json]
+            if len(missing_fields) > 0:
+                response = jsonify({'error': f'Missing Field: {missing_fields[0]}'}), 400
+            else:
+                education_data = data.get('education', [])
+                new_education = request.json
+                education_id = len(education_data)
+                
+                # new_education["id"] = education_id
+                education_data.append(new_education)
+                
+                data['education'] = education_data
+                save_data('data.json', data)
+                response = jsonify({'id': education_id})
+        return response
 
     return jsonify({})
 
