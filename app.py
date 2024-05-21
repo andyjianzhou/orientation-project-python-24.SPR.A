@@ -106,7 +106,6 @@ def education():
                 new_education = request.json
                 education_id = len(education_data)
                 
-                # new_education["id"] = education_id
                 education_data.append(new_education)
                 
                 data['education'] = education_data
